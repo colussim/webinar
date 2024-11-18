@@ -1,3 +1,6 @@
+![MySQL Version](https://img.shields.io/badge/MySQL-9.0-blue)
+![Last Updated](https://img.shields.io/badge/last%20update-November%202024-yellow)
+
 ##  MySQL High Availability, Scalability and Disaster Recovery
 
 MySQL High Availability, Scalability and Disaster Recovery
@@ -612,4 +615,14 @@ http://10.89.0.20:5001
 ▶️ [Replication Sets](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-replicaset.html)
 
 ▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.1/en/)
+
 ▶️ [Editions](https://www.mysql.com/products/)
+
+---
+<table>
+<tr style="border: 0px transparent">
+	<td style="border: 0px transparent"><a href="../README.md" title="home">🏠</a></td>
+</tr>
+</tr>
+
+</table>
