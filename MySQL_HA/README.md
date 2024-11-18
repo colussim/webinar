@@ -578,24 +578,15 @@ Check if the application is successfully deployed :
 
 ```bash
 
-:> kubectl -n ecommerce get all
-NAME                             READY   STATUS    RESTARTS   AGE
-pod/ecommerce-6f45495686-pwvcc   1/1     Running   0          98s
-
-NAME                        TYPE           CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
-service/ecommerce-service   LoadBalancer   10.96.48.98   10.89.0.103   5001:31334/TCP   99s
-
-NAME                        READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/ecommerce   1/1     1            1           99s
-
-NAME                                   DESIRED   CURRENT   READY   AGE
-replicaset.apps/ecommerce-6f45495686   1         1         1       99s
+:> podman ps --filter "name=ecommerce" --format "table {{.Names}}\t{{.Status}}"
+NAMES       STATUS
+ecommerce   Up 3 minutes
 :>
  
 ```
 
-The application  is up 😀,we can connect to the external address of the service (10.89.0.20) on port 5001:
-http://10.89.0.20:5001
+The application  is up 😀,we can connect to the external address of the service (10.89.0.20) on port 5000:
+http://10.89.0.20:5000
 
 
 ![app.png](imgs/app.png)
@@ -608,7 +599,7 @@ http://10.89.0.20:5001
 
 ▶️ [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-cluster.html)
 
-▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.0/en/)
+▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.1/en/)
 
 ▶️ [Pre-Checking Instance Configuration for InnoDB Cluster Usage](https://dev.mysql.com/doc/mysql-shell/9.1/en/check-instance-configuration.html)
 

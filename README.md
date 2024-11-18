@@ -1,11 +1,12 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![MySQL Version](https://img.shields.io/badge/MySQL-9.0-blue)
 ![Last Updated](https://img.shields.io/badge/last%20update-November%202024-yellow)
+![webinar](imgs/webinar.png)
 # Webinar Repository
 
 Welcome to the MySQL Webinar Repository! This repository serves as a central hub for various webinars focusing on different topics, providing resources and materials related to each session. 
 
-## Webinar
+## Webinars
 
 ### MySQL High Availability, Scalability, and Disaster Recovery
 
