@@ -592,6 +592,15 @@ http://10.89.0.20:5000
 ![app.png](imgs/app.png)
 
 
+✅ Testing failover
+
+Now that our environment is operational, we will simulate a failover by stopping MySQL instance 1 (we stop pod1) and observe that our application continues to function without losing any transactions (e.g., if we were in the process of placing an order).
+
+## ✅ Conclusion
+
+By combining these components, you can design a robust database architecture capable of addressing the challenges of availability, performance, and disaster recovery.
+
+❗️ You can find the presentation in both PowerPoint and PDF formats in the *presentation-ppt* directory, and the scripts used are located in the *scripts* directory. The deployment of the test application is available in the *app* directory.
 
 ---
 ## ✅ Ressources
@@ -608,6 +617,8 @@ http://10.89.0.20:5000
 ▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.1/en/)
 
 ▶️ [Editions](https://www.mysql.com/products/)
+
+▶️ [Webinar video](https://videohub.oracle.com/media/1_vj1szanj?elq_mid=260180&sh=2921302135303121362431233130343135302622232632252136323430283323&cmid=DEVT240916P00006C00002)
 
 ---
 <table>
