@@ -604,8 +604,12 @@ http://10.89.0.20:5001
 
 
 ▶️ [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-cluster.html)
+
 ▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.0/en/)
+
 ▶️ [Pre-Checking Instance Configuration for InnoDB Cluster Usage](https://dev.mysql.com/doc/mysql-shell/9.1/en/check-instance-configuration.html)
+
 ▶️ [Replication Sets](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-replicaset.html)
+
 ▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.1/en/)
 ▶️ [Editions](https://www.mysql.com/products/)
