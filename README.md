@@ -17,6 +17,7 @@ This presentation provides comprehensive guidance on establishing a high availab
 ### Repository Structure
 
 - [`MySQL_HA`](MySQL_HA): Contains materials related to the MySQL High Availability, Scalability, and Disaster Recovery webinar, including presentation slides, sample code, and additional resources.
+- [`MySQL_Beginner`](MySQL_Beginner_FR): Contains materials related to the MySQL for Beginners,including presentation slides, sample code, and additional resources.
 
 ## Getting Involved
 
