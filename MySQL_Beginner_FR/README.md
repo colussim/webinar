@@ -46,40 +46,33 @@ Downloading Docker images before running them offers several key advantages. It 
 > Here, we download the Enterprise version, but you can replace it with the [Community version](https:/hub.docker.com/_/mysql): docker pull mysql:9
 
 ✅ Creating persistent volume
-We will create three persistent volumes for each MySQL instance :
+We will create three persistent volumes for MySQL instance :
 
 ```bash
 
-:> podman volume create pvcdb1
-:> podman volume create pvcdb2
-:> podman volume create pvcdb3
+:> podman volume create vdemodb01
 :>
 ```
 
 
 ✅ Create a Pods:
-We'll create a pod for each MySQL instance (3) and a pod for the router. Run the following command to create a pod:
+We'll create a pod for MySQL instance. Run the following command to create a pod:
 
 ```bash
 
-:> podman pod create --name mysql-pod1 -p 3306:3306 --network mysqlsrv
-:> podman pod create --name mysql-pod2  -p 3307:3306 --network mysqlsrv
-:> podman pod create --name mysql-pod3 -p 3308:3306 --network mysqlsrv
-:> podman pod create --name mysql-rout1 -p 6446:6446 -p 6447:6447 6450:6450 --network mysqlsrv 
+:> podman pod create --name mysql9-pod1 -p 3306:3306 --network mysqlsrv
 :>
 ```
 
-✅ We expose the port for each MySQL instance and the router.
+✅ We expose the port for MySQL instance.
 
-Check Pods instances run :
+Check Pod instance run :
 ```bash
 :>
 :> podman pod ls
 POD ID        NAME         STATUS      CREATED             INFRA ID      # OF CONTAINERS
-6a4b117eafff  mysql-rout1  Created     6 seconds ago       bed1f4936f67  1
-e87e7fb8a411  mysql-pod3   Created     5 seconds ago ago  1dee83c04865  1
-cfe7ebe8a702  mysql-pod2   Created     5 seconds ago ago  cb5b198ed7e2  1
-2741f23813ee  mysql-pod1   Created     5 seconds ago      a9e97cfba6cf  1
+
+2741f23813ee  mysql9-pod1   Created     5 seconds ago      a9e97cfba6cf  1
 :>
 ```
 
@@ -107,8 +100,7 @@ ID                         NAME    DRIVER   CREATED         UPDATED
 ```
 
 
-✅ Creation of a **my.cnf** configuration file per instance, which we will mount as a volume.
-For this topic, the file will be almost identical for the 3 instances, only the **report_host** entry will change, taking the name of each instance.
+✅ Creation of a **my.cnf** configuration file , which we will mount as a volume.
 
 ```toml
 [mysqld]
@@ -123,11 +115,13 @@ pid-file=/var/run/mysqld/mysqld.pid
 server_id=1
 enforce_gtid_consistency=ON
 gtid_mode=ON
-report_host = 'mysql-instance-X'
+report_host = 'mysql9-instance-1'
 
 ```
 
 ✅ Creation of a **init.sql** init file which will be executed the first time the MySQL intance is started. In this script we create the **root** user with the right permissions .
+
+❗️ Don’t forget to change the password in the **init.sql** file.
 
 ```sql
 :SQL> CREATE USER 'root'@'%' IDENTIFIED BY 'XXXX'; 
@@ -136,8 +130,14 @@ FLUSH PRIVILEGES;
 :SQL>
 ```
 
-✅ Run MySQL Instances:
-Start three MySQL instances in the created pod. Use the --pod option to specify the pod for each container.
+✅ Run MySQL Instance:
+Start three MySQL instance in the created pod. Use the --pod option to specify the pod for a container.
+
+❗️ Before running the container, you need to generate the certificates in the ssl directory by executing the following script:
+```bash
+./generate_ssl_certif.sh
+```
+
 
 ```bash
 
@@ -145,26 +145,12 @@ Start three MySQL instances in the created pod. Use the --pod option to specify 
 :> export CONFIG=$HOME/Documents/App/mysql-pod/config
 :> export CERT=$HOME/Documents/App/mysql-pod/ssl
 :>
-:> podman run --name mysql-instance-1 --pod mysql-pod1 --network mysqlsrv --ip 10.87.0.3 \ 
+:> podman run --name mysql9-instance-1 --pod mysql9-pod1 --network mysqlsrv --ip 10.87.0.30 \ 
 --secret MYSQL_ROOT_PASSWORD,type=env \
 -v $CERT:/etc/my.cnf.d/certs/:ro \
 -v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
 -v $CONFIG/1/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
---bind-address=10.87.0.3
-:>
-:> podman run --name mysql-instance-2 --pod mysql-pod2 --network mysqlsrv --ip 10.87.0.4 \ 
---secret MYSQL_ROOT_PASSWORD,type=env \
--v $CERT:/etc/my.cnf.d/certs/:ro \
--v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
--v $CONFIG/2/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
---bind-address=10.87.0.4
-:>
-:> podman run --name mysql-instance-3 --pod mysql-pod3 --network mysqlsrv --ip 10.87.0.5 \ 
---secret MYSQL_ROOT_PASSWORD,type=env \
--v $CERT:/etc/my.cnf.d/certs/:ro \
--v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
--v $CONFIG/3/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
---bind-address=10.87.0.5
+--bind-address=10.87.0.30
 :>
 ```
 
@@ -174,9 +160,7 @@ Start three MySQL instances in the created pod. Use the --pod option to specify 
 
 :> podman ps |gre mysql-instance
 
-059e46071ad6  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3306->3306/tcp  mysql-instance-1
-57e32d7fdc54  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3307->3306/tcp  mysql-instance-2
-e5fe65432c40  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3308->3306/tcp  mysql-instance-3
+059e46071ad6  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3306->3306/tcp  mysql9-instance-1
 :>
 ```
 
@@ -184,310 +168,9 @@ e5fe65432c40  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch6
 
 ```bash
 
-:>  mysqlsh -uri root@10.87.0.3
+:>  mysqlsh -uri root@10.87.0.30
 :>
 ```
-
-check the connection also for the 2 other instances(10.87.0.4 , 10.87.0.5)
-
-✅ Check instance ok for InnoDB Cluster :
-
-Before creating a production deployment from server instances you need to check that MySQL on each instance is correctly configured. The dba.configureInstance() function does this as part of configuring the instance, but you can optionally use the dba.checkInstanceConfiguration(instance) function . 
-
-```bash
-
-:> mysqlsh -uri root@10.87.0.3 --js 
-
- MySQL 10.87.0.3:3306 ssl  JS > dba.checkInstanceConfiguration('root@mysql-instance-1:3306');
-Validating MySQL instance at mysql-instance-1:3306 for use in an InnoDB Cluster...
-
-This instance reports its own address as mysql-instance-1:3306
-
-Checking whether existing tables comply with Group Replication requirements...
-No incompatible tables detected
-
-Checking instance configuration...
-Instance configuration is compatible with InnoDB cluster
-
-The instance 'mysql-instance-1:3306' is valid for InnoDB Cluster usage.
-
-{
-    "status": "ok"
-}
-```
-
-Repeat this process for each server instance that you plan to use as part of your cluster. The report generated after running dba.checkInstanceConfiguration() provides information about any configuration changes that will be required to use the instance in an InnoDB Cluster deployment. The action field in the config_error section of the report tells you whether MySQL on the instance requires a restart to detect any change made to the configuration file. 
-
-If not ok, prepare instances for group replication, , using the command (for each instance) : 
-```js
-
-MySQL 10.87.0.3:3306 ssl JS > dba.configureInstance('root@mysql-instance-1:3306')
-													 
-```
-
-✅ Create a admin user for InnoDB Cluster :
-
-```bash
-
-:> mysqlsh -uri root@10.87.0.3 --js 
-MySQL 10.87.0.3:3306 ssl JS > dba.configureInstance('root@mysql-instance-1:3306',{clusterAdmin: 'clustadm', clusterAdminPassword: 'Bench123'}) 
-This instance reports its own address as mysql-instance-1:3306
-Assuming full account name 'clustadm'@'%' for clustadm
-
-applierWorkerThreads will be set to the default value of 4.
-
-Creating user clustadm@%.
-Account clustadm@% was successfully created.
-
-
-The instance 'mysql-instance-1:3306' is valid for InnoDB Cluster usage.
-
-Successfully enabled parallel appliers.
-:MySQL 10.87.0.3:3306 ssl JS > 
-```
-
-Repeat this process for each server instance that you plan to use as part of your cluster. 
-
-✅ Create a InnoDB Cluster :
-
-Now that our instances are configured, we'll create our cluster:
-```bash
-
-:> mysqlsh -uri clustadm@10.87.0.3 --js
-MySQL 10.87.0.3:3306 ssl JS > var cluster = dba.createCluster('myCluster');
-Validating instance configuration at 10.87.0.3:3306...
-
-This instance reports its own address as mysql-instance-1:3306
-
-Instance configuration is suitable.
-NOTE: Group Replication will communicate with other members using 'mysql-instance-1:3306'. Use the localAddress option to override.
-
-* Checking connectivity and SSL configuration...
-
-Creating InnoDB Cluster 'msql01-demo' on 'mysql-instance-1:3306'...
-
-Adding Seed Instance...
-Cluster successfully created. Use Cluster.addInstance() to add MySQL instances.
-At least 3 instances are needed for the cluster to be able to withstand up to
-one server failure.
-
-MySQL 10.87.0.3:3306 ssl JS >
-````
-
-Our cluster is created but not operational, instance mysql-instance-1 is considered as primary, we're going to add the other instances to form our cluster.
-
-```bash
-
-MySQL 10.87.0.3:3306 ssl JS > cluster.addInstance('clustadm:my-secret-pw@mysql-instance-2:3306');
-Instance 'mysql-instance-2:3306' has the following errant GTIDs that do not exist in the cluster:
- a4db0031-87bb-11ef-bfb4-7e928b9d7b40:1
-
-WARNING: Discarding these extra GTID events can either be done manually or by completely overwriting the state of 'mysql-instance-2:3306' with a physical snapshot from an existing cluster member. To use this method by default, set the 'recoveryMethod' option to 'clone'.
-
-Having extra GTID events is not expected, and it is recommended to investigate this further and ensure that the data can be removed prior to choosing the clone recovery method.
-
-Please select a recovery method [C]lone/[A]bort (default Abort): C
-Validating instance configuration at mysql-instance-2:3306...
-
-This instance reports its own address as mysql-instance-2:3306
-
-Instance configuration is suitable.
-NOTE: Group Replication will communicate with other members using 'mysql-instance-2:3306'. Use the localAddress option to override.
-
-* Checking connectivity and SSL configuration...
-
-A new instance will be added to the InnoDB Cluster. Depending on the amount of
-data on the cluster this might take from a few seconds to several hours.
-
-Adding instance to the cluster...
-
-Monitoring recovery process of the new cluster member. Press ^C to stop monitoring and let it continue in background.
-Clone based state recovery is now in progress.
-
-NOTE: A server restart is expected to happen as part of the clone process. If the
-server does not support the RESTART command or does not come back after a
-while, you may need to manually start it back.
-
-* Waiting for clone to finish...
-NOTE: mysql-instance-2:3306 is being cloned from mysql-instance-1:3306
-** Stage DROP DATA: Completed
-** Clone Transfer  
-    FILE COPY  ############################################################  100%  Completed
-    PAGE COPY  ############################################################  100%  Completed
-    REDO COPY  ############################################################  100%  Completed
-
-NOTE: mysql-instance-2:3306 is shutting down...
-
-* Waiting for server restart... ready 
-* mysql-instance-2:3306 has restarted, waiting for clone to finish...
-** Stage RESTART: Completed
-* Clone process has finished: 79.96 MB transferred in about 1 second (~79.96 MB/s)
-
-State recovery already finished for 'mysql-instance-2:3306'
-
-The instance 'mysql-instance-2:3306' was successfully added to the cluster.
-
-MySQL 10.87.0.3:3306 ssl JS > cluster.addInstance('clustadm:my-secret-pw@mysql-instance-3:3306');
-
-Please select a recovery method [C]lone/[A]bort (default Abort): C
-Validating instance configuration at mysql-instance-3:3306...
-
-This instance reports its own address as mysql-instance-3:3306
-...............
-The instance 'mysql-instance-3:3306' was successfully added to the cluster.
-
-````
-
-Our cluster is finally up and running 😀
-
-Check cluster status :
-
-```bash
-MySQL 10.87.0.3:3306 ssl JS > cluster.status();
-{
-    "clusterName": "msql01-demo", 
-    "defaultReplicaSet": {
-        "name": "default", 
-        "primary": "mysql-instance-1:3306", 
-        "ssl": "REQUIRED", 
-        "status": "OK", 
-        "statusText": "Cluster is ONLINE and can tolerate up to ONE failure.", 
-        "topology": {
-            "mysql-instance-1:3306": {
-                "address": "mysql-instance-1:3306", 
-                "memberRole": "PRIMARY", 
-                "mode": "R/W", 
-                "readReplicas": {}, 
-                "replicationLag": "applier_queue_applied", 
-                "role": "HA", 
-                "status": "ONLINE", 
-                "version": "9.0.1"
-            }, 
-            "mysql-instance-2:3306": {
-                "address": "mysql-instance-2:3306", 
-                "memberRole": "SECONDARY", 
-                "mode": "R/O", 
-                "readReplicas": {}, 
-                "replicationLag": "applier_queue_applied", 
-                "role": "HA", 
-                "status": "ONLINE", 
-                "version": "9.0.1"
-            }, 
-            "mysql-instance-3:3306": {
-                "address": "mysql-instance-3:3306", 
-                "memberRole": "SECONDARY", 
-                "mode": "R/O", 
-                "readReplicas": {}, 
-                "replicationLag": "applier_queue_applied", 
-                "role": "HA", 
-                "status": "ONLINE", 
-                "version": "9.0.1"
-            }
-        }, 
-        "topologyMode": "Single-Primary"
-    }, 
-    "groupInformationSourceMember": "mysql-instance-1:3306"
-}
-MySQL 10.87.0.3:3306 ssl JS >
-
-```
-
-
-✅  Deployment  router service
-
-The next step is to deploy the router service to make our instances accessible from an application
-
-You can deploy a MySQL Router to direct client application traffic to the proper clusters. Routing is based on the connection port of the application issuing a database operation:
-- Writes are routed to the primary Cluster instance in the primary ClusterSet.
-- Reads can be routed to any instance in the primary Cluster.
-
-When you start a MySQL Router, it is bootstrapped against the MySQL InnoDB ClusterSet deployment. The MySQL Router instances connected with the MySQL InnoDB ClusterSet are aware of any controlled switchovers or emergency failovers and direct traffic to the new primary cluster.
-
-Run MySQL Router Instances:
-Start three MySQL Router instance in the created pod. 
-
-```bash
-:> podman run \
-  --name mysql-router1 \
-  --pod mysql-pod-router1  \
-  --network mysqlsrv \
-  --ip 10.87.0.2 \
-  -e MYSQL_HOST=10.87.0.3 \
-  -e MYSQL_PORT=3306 \
-  -e MYSQL_USER=root \
-  -e MYSQL_PASSWORD=XXXXX \
-  -e MYSQL_INNODB_CLUSTER_MEMBERS=3 \
-  -d container-registry.oracle.com/mysql/enterprise-router:9.0.1-aarch64
-:>
-```
-
-Check MySQL Router :
-
-```bash
-:> podman ps -a
-
-d94d132ea7ac  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld  3 minutes ago  Up 3 minutes             0.0.0.0:6446->6446/tcp     mysql-router
-:>
-```
-
-Check MySQL Router logs
-
-```bash
-:> podman container logs mysql-router1
-
-# MySQL Router configured for the InnoDB Cluster 'msql01-demo'
-
-After this MySQL Router has been started with the generated configuration
-
-    $ mysqlrouter -c /tmp/mysqlrouter/mysqlrouter.conf
-
-InnoDB Cluster 'msql01-demo' can be reached by connecting to:
-
-## MySQL Classic protocol
-
-- Read/Write Connections: localhost:6446
-- Read/Only Connections:  localhost:6447
-- Read/Write Split Connections: localhost:6450
-
-## MySQL X protocol
-
-- Read/Write Connections: localhost:6448
-- Read/Only Connections:  localhost:6449
-:>
-```
-
-You can see that MySQL Router offers 3 ports :
-* connect to read/wtite node (6446)
-* connect to read only node (6447)
-* connect to read_write_split only node (6450)
-
-These are the three default ports. If you want to modify them, it would be preferable to create a mysqlrouter.conf file, which we will mount as a volume with the following configuration:
-
-
-```toml
-[routing:myCluster_rw]
-bind_address=10.87.0.2
-bind_port=6446
-destinations=metadata-cache://myCluster/?role=PRIMARY
-routing_strategy=first-available
-protocol=classic
- 
-[routing:myCluster_ro]
-bind_address=10.87.0.2
-bind_port=6447
-destinations=metadata-cache://myCluster/?role=SECONDARY
-routing_strategy=round-robin-with-fallback
-protocol=classic
- 
-[router:read_write_split]
-bind_address=10.87.0.2
-bind_port=6450
-destinations=metadata-cache://mycluster/?role=PRIMARY_AND_SECONDARY
-routing_strategy=round-robin
-access_mode=auto
-protocol=classic
-connection_sharing=1
-``` 
 
 
 ✅  Deployment of an application 
@@ -501,7 +184,7 @@ This application creates a **mydb** database with a user **app** and deploys an 
 Run this command:
 ```bash
 
-:> mysql -u root -h 10.87.0.3  -p < Database/DB_SCRIPT.sql
+:> mysql -u root -h 10.87.0.30  -p < Database/DB_SCRIPT.sql
 :>
 ```
 
@@ -510,17 +193,16 @@ Run this command:
 Run this command:
 ```bash
 
-:> mysql -u root -h 10.87.0.3  -p < Database/create_user.sql
+:> mysql -u root -h 10.87.0.30  -p < Database/create_user.sql
 :>
 ```
 This sql script creates an app user with a password , modify this script to change the user name and password.
 
-Connect to one of the secondary servers to check if the mydb database has been properly replicated.
-We will connect using the external address of the Router on the read-only port (6447)
+Connect to server to check if the mydb database has been ready :
 
 ```bash
 
-:> mysql -u app -h 10.89.0.2 -P 6447 -p mydb -e "SHOW TABLES;"
+:> mysql -u app -h 10.89.0.30 -p mydb -e "SHOW TABLES;"
 +-------------------+
 | Tables_in_mydb    |
 +-------------------+
@@ -541,7 +223,7 @@ We will connect using the external address of the Router on the read-only port (
 :>
 ```
 
-Our application database is deployed and accessible through the router service for both reading and writing. We can now deploy our application.
+Our application database is deployed and accessible. We can now deploy our application.
 
 
 
@@ -592,33 +274,29 @@ http://10.89.0.20:5000
 ![app.png](imgs/app.png)
 
 
-✅ Testing failover
 
-Now that our environment is operational, we will simulate a failover by stopping MySQL instance 1 (we stop pod1) and observe that our application continues to function without losing any transactions (e.g., if we were in the process of placing an order).
 
 ## ✅ Conclusion
 
-By combining these components, you can design a robust database architecture capable of addressing the challenges of availability, performance, and disaster recovery.
+In conclusion, MySQL is a powerful and versatile tool for database management, whether for personal or professional projects. We covered essential topics such as choosing between the Community and Enterprise editions, installation on different systems, and common errors you might encounter.
 
-❗️ You can find the presentation in both PowerPoint and PDF formats in the *presentation-ppt* directory, and the scripts used are located in the *scripts* directory. The deployment of the test application is available in the *app* directory.
+I encourage you to explore more available resources and practice with MySQL to strengthen your skills. Don’t hesitate to ask questions or look for solutions in the official documentation.
+
+Good luck with your MySQL projects! 😀
+
+❗️ You can find the presentation in both PowerPoint and PDF formats in the *presentation-ppt-FR* directory, and the scripts used are located in the *scripts* directory. The deployment of the test application is available in the *app* directory.
 
 ---
 ## ✅ Ressources
 
 
-▶️ [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-cluster.html)
-
-▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.1/en/)
-
-▶️ [Pre-Checking Instance Configuration for InnoDB Cluster Usage](https://dev.mysql.com/doc/mysql-shell/9.1/en/check-instance-configuration.html)
-
-▶️ [Replication Sets](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-replicaset.html)
+▶️ [Deploying MySQL on Linux with Docker Containers](https://dev.mysql.com/doc/refman/9.0/en/linux-installation-docker.html)
 
 ▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.1/en/)
 
 ▶️ [Editions](https://www.mysql.com/products/)
 
-▶️ [Webinar video](https://videohub.oracle.com/media/1_vj1szanj?elq_mid=260180&sh=2921302135303121362431233130343135302622232632252136323430283323&cmid=DEVT240916P00006C00002)
+▶️ [Webinar video](https://go.oracle.com/LP=127708)
 
 ---
 <table>
