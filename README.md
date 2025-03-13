@@ -18,7 +18,7 @@ This presentation provides comprehensive guidance on establishing a high availab
 
 - [`MySQL_HA`](MySQL_HA): Contains materials related to the MySQL High Availability, Scalability, and Disaster Recovery webinar, including presentation slides, sample code, and additional resources.
 - [`MySQL_Beginner`](MySQL_Beginner_FR): Contains materials related to the MySQL for Beginners,including presentation slides, sample code, and additional resources.
-- [`Fine Tuning MySQL For Your Business Needs`](MySQL_PERF): Contains materials related to the Fine Tuning MySQL For Your Business Needs,including presentation slides.
+- [`MySQL_PERF`](MySQL_PERF): Contains materials related to the Fine Tuning MySQL For Your Business Needs,including presentation slides.
 
 ## Getting Involved
 
