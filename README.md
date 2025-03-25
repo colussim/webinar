@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![MySQL Version](https://img.shields.io/badge/MySQL-9.0-blue)
-![Last Updated](https://img.shields.io/badge/last%20update-February%202025-yellow)
+![Last Updated](https://img.shields.io/badge/last%20update-March%202025-yellow)
 ![webinar](imgs/webinar.png)
 # Webinar Repository
 
