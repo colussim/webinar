@@ -12,3 +12,12 @@ An Introduction to MySQL Performance Optimization.
 
 
 ![monitor](imgs/monitor.jpg)
+
+---
+<table>
+<tr style="border: 0px transparent">
+	<td style="border: 0px transparent"><a href="../README.md" title="home">🏠</a></td>
+</tr>
+</tr>
+
+</table>
