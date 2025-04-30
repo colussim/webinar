@@ -1,6 +1,6 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
-![MySQL Version](https://img.shields.io/badge/MySQL-9.0-blue)
-![Last Updated](https://img.shields.io/badge/last%20update-March%202025-yellow)
+![MySQL Version](https://img.shields.io/badge/MySQL-9.2-blue)
+![Last Updated](https://img.shields.io/badge/last%20update-April%202025-yellow)
 ![webinar](imgs/webinar.png)
 # Webinar Repository
 
@@ -20,6 +20,7 @@ This presentation provides comprehensive guidance on establishing a high availab
 - [`MySQL_Beginner`](MySQL_Beginner_FR): Contains materials related to the MySQL for Beginners in French,including presentation slides, sample code, and additional resources.
 - [`MYSQL_PERF`](MYSQL_PERF): Contains materials related to the Fine Tuning MySQL For Your Business Needs,including presentation slides.
 - [`MYSQL_for_Government`](MYSQL_for_Government): Contains materials related to the MySQL for Government in French,including presentation slides.
+- [`MYSQL_OEM`](MYSQL_OEM): Contains materials related to MySQL Monitoring with Oracle Enterprise Manager Plugin,including presentation slides.
 
 ## Getting Involved
 
