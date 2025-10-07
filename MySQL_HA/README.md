@@ -1,5 +1,5 @@
-![MySQL Version](https://img.shields.io/badge/MySQL-9.0-blue)
-![Last Updated](https://img.shields.io/badge/last%20update-November%202024-yellow)
+![MySQL Version](https://img.shields.io/badge/MySQL-9.4-blue)
+![Last Updated](https://img.shields.io/badge/last%20update-October%072025-yellow)
 
 ##  MySQL High Availability, Scalability and Disaster Recovery
 
