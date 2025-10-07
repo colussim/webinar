@@ -41,8 +41,8 @@ Downloading Docker images before running them offers several key advantages. It 
 
 ```bash
 
-:> podman  pull container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64
-:> podman pull container-registry.oracle.com/mysql/enterprise-router:9.0.1-aarch64 
+:> podman  pull container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64
+:> podman pull container-registry.oracle.com/mysql/enterprise-router:9.4.0-aarch64 
 :>
 ```
 
@@ -150,21 +150,21 @@ Start three MySQL instances in the created pod. Use the --pod option to specify 
 --secret MYSQL_ROOT_PASSWORD,type=env \
 -v $CERT:/etc/my.cnf.d/certs/:ro \
 -v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
--v $CONFIG/1/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
+-v $CONFIG/1/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 \ 
 --bind-address=10.87.0.3
 :>
 :> podman run --name mysql-instance-2 --pod mysql-pod2 --network mysqlsrv --ip 10.87.0.4 \ 
 --secret MYSQL_ROOT_PASSWORD,type=env \
 -v $CERT:/etc/my.cnf.d/certs/:ro \
 -v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
--v $CONFIG/2/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
+-v $CONFIG/2/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 \ 
 --bind-address=10.87.0.4
 :>
 :> podman run --name mysql-instance-3 --pod mysql-pod3 --network mysqlsrv --ip 10.87.0.5 \ 
 --secret MYSQL_ROOT_PASSWORD,type=env \
 -v $CERT:/etc/my.cnf.d/certs/:ro \
 -v pvcdb1:/var/lib/mysql -v $INITSQL:/docker-entrypoint-initdb.d/init.sql \
--v $CONFIG/3/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 \ 
+-v $CONFIG/3/my.cnf:/etc/my.cnf -d container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 \ 
 --bind-address=10.87.0.5
 :>
 ```
@@ -175,9 +175,9 @@ Start three MySQL instances in the created pod. Use the --pod option to specify 
 
 :> podman ps |gre mysql-instance
 
-059e46071ad6  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3306->3306/tcp  mysql-instance-1
-57e32d7fdc54  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3307->3306/tcp  mysql-instance-2
-e5fe65432c40  container-registry.oracle.com/mysql/enterprise-server:9.0.1-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3308->3306/tcp  mysql-instance-3
+059e46071ad6  container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3306->3306/tcp  mysql-instance-1
+57e32d7fdc54  container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3307->3306/tcp  mysql-instance-2
+e5fe65432c40  container-registry.oracle.com/mysql/enterprise-server:9.4.0-aarch64 mysqld 5 mn ago Up 5 minutes 0.0.0.0:3308->3306/tcp  mysql-instance-3
 :>
 ```
 
@@ -607,15 +607,15 @@ By combining these components, you can design a robust database architecture cap
 ## ✅ Ressources
 
 
-▶️ [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-cluster.html)
+▶️ [InnoDB Cluster](https://dev.mysql.com/doc/mysql-shell/9.4/en/mysql-innodb-cluster.html)
 
-▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.1/en/)
+▶️ [MySQL Router](https://dev.mysql.com/doc/mysql-router/9.4/en/)
 
-▶️ [Pre-Checking Instance Configuration for InnoDB Cluster Usage](https://dev.mysql.com/doc/mysql-shell/9.1/en/check-instance-configuration.html)
+▶️ [Pre-Checking Instance Configuration for InnoDB Cluster Usage](https://dev.mysql.com/doc/mysql-shell/9.4/en/check-instance-configuration.html)
 
-▶️ [Replication Sets](https://dev.mysql.com/doc/mysql-shell/9.1/en/mysql-innodb-replicaset.html)
+▶️ [Replication Sets](https://dev.mysql.com/doc/mysql-shell/9.4/en/mysql-innodb-replicaset.html)
 
-▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.1/en/)
+▶️ [Reference Manual](https://dev.mysql.com/doc/refman/9.4/en/)
 
 ▶️ [Editions](https://www.mysql.com/products/)
 
